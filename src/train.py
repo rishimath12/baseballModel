@@ -24,7 +24,7 @@ os.makedirs(MODELS_DIR, exist_ok=True)
 
 PA_SO = {"strikeout", "strikeout_double_play"}
 
-# ------------------ helpers ------------------
+# helpers
 
 def _daterange(start: datetime, end: datetime) -> List[datetime]:
     d, out = start, []
@@ -45,7 +45,7 @@ def _ks_map_from_cache(date_str: str) -> dict:
     so["pitcher"] = so["pitcher"].astype(int)
     return so.groupby("pitcher").size().to_dict()  # {pitcher_id: Ks}
 
-# ------------------ build + label ------------------
+#  build + label
 
 def build_historical(start: str, end: str, lookback_games: int = 5, out: Optional[str] = None) -> str:
     """
@@ -91,7 +91,7 @@ def build_historical(start: str, end: str, lookback_games: int = 5, out: Optiona
     print(f"[build] done → {out_path}  ({total} rows)")
     return out_path
 
-# ------------------ fit + save ------------------
+#  fit + save
 
 def fit_model(hist_glob: str, model_out: str, feats_out: str):
     """
@@ -185,7 +185,7 @@ def fit_model(hist_glob: str, model_out: str, feats_out: str):
     print(f"[fit] saved → {model_out}")
     print(f"[fit] saved → {feats_out}")
 
-# ------------------ CLI ------------------
+# CLI
 
 def main():
     ap = argparse.ArgumentParser(description="Build historical data and auto‑fit the model.")

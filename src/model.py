@@ -13,7 +13,7 @@ from scraper import get_probable_pitchers, build_all_features
 from pybaseball import cache as pb_cache
 pb_cache.enable()  # leverage local cache
 
-# ---------- Paths ----------
+#Paths
 ROOT = os.path.dirname(os.path.dirname(__file__)) if "__file__" in globals() else "."
 RAW_DIR = os.path.join(ROOT, "data", "raw")
 HIST_DIR = os.path.join(ROOT, "data", "historical")
@@ -29,7 +29,7 @@ PROBABLES_CSV = os.path.join(RAW_DIR, "today_probables.csv")
 MODEL_PKL = os.path.join(MODELS_DIR, "model.pkl")
 FEATURES_JSON = os.path.join(MODELS_DIR, "feature_list.json")
 
-# ---------- Parsing & math utils ----------
+# Parsing & math utils
 def _safe_float(x) -> Optional[float]:
     try:
         if isinstance(x, str) and x.endswith("%"):
@@ -101,7 +101,7 @@ def _poisson_quantile(lam: float, q: float) -> int:
         p = p * lam / k
     return k
 
-# ---------- Baseline (fallback) ----------
+#Baseline (fallback)
 def _estimate_ip(recent_pitches: float, recent_games: float) -> float:
     avg_pitches = (recent_pitches / max(recent_games, 1)) if recent_games and recent_games > 0 else (recent_pitches if recent_pitches > 0 else 85.0)
     ip = avg_pitches / 15.0  # ~15 pitches/IP
@@ -132,7 +132,7 @@ def _baseline_lambda(row: pd.Series) -> float:
     lam = max(0.1, base_k_rate) * ip_adj * 3.0
     return float(np.clip(lam, 0.3, 12.0))
 
-# ---------- Trained model loader ----------
+#Trained model loader
 def _load_trained() -> Optional[Dict[str, Any]]:
     if not os.path.exists(MODEL_PKL):
         return None
@@ -148,7 +148,7 @@ def _load_trained() -> Optional[Dict[str, Any]]:
         print(f"Could not load trained model, using baseline. Reason: {e}")
         return None
 
-# ---------- Main ----------
+#Main
 def main():
     # Date to run (today UTC by default so it matches scraper defaults)
     date_str = datetime.now(timezone.utc).date().isoformat()

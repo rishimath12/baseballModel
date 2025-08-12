@@ -19,7 +19,7 @@ os.makedirs(CACHE_DIR, exist_ok=True)
 
 PA_SO = {"strikeout", "strikeout_double_play"}
 
-# -------------------- helpers --------------------
+#helpers
 
 def _to_iso_date_col(df: pd.DataFrame, col: str = "game_date") -> pd.DataFrame:
     if col in df.columns:
@@ -52,7 +52,7 @@ def _fetch_pitcher_hand(pid: int) -> Optional[str]:
         pass
     return None
 
-# -------------------- BULK season cache --------------------
+# BULK season cache
 
 def get_season_statcast(year: int) -> pd.DataFrame:
     p = os.path.join(CACHE_DIR, f"season_{year}.parquet")
@@ -84,7 +84,7 @@ def get_season_statcast(year: int) -> pd.DataFrame:
     return df
 
 
-# -------------------- Starters (authoritative PBP) --------------------
+# Starters (authoritative PBP)
 
 def get_starters_for_date(date_str: str) -> pd.DataFrame:
     """First pitcher in TOP = home starter; first in BOTTOM = away starter."""
@@ -121,7 +121,7 @@ def get_starters_for_date(date_str: str) -> pd.DataFrame:
                              "throws": _fetch_pitcher_hand(away_pid),"pitcher_name": None})
     return pd.DataFrame(rows).drop_duplicates(subset=["pitcher_id","game_date"])
 
-# -------------------- Feature builders (season cache; FAST) --------------------
+# Feature builders (season cache; FAST)
 
 def _last_n_starts(season_df: pd.DataFrame, pid: int, n: int, end_date: str) -> pd.DataFrame:
     dfp = season_df[(season_df["pitcher"] == pid) & (season_df["game_date"] <= end_date)]
@@ -174,7 +174,7 @@ def build_features_for_ids(starters_df: pd.DataFrame,
         })
     return pd.DataFrame(rows), pd.DataFrame(columns=["pitcher_id","pitcher_name","pitch_type","usage_pct","whiff_rate"])
 
-# ---------- Live path for model.py (probables + same fast features) ----------
+# Live path for model.py (probables + same fast features)
 
 def get_probable_pitchers(date_str: str):
     params = {"sportId": 1, "date": date_str,
@@ -207,7 +207,7 @@ def build_all_features(prob_int: pd.DataFrame,
     """Live features for model.py using season cache (mirrors training)."""
     return build_features_for_ids(prob_int, lookback_days, feature_date_utc, lookback_games)
 
-# ---------- CLI (optional quick run) ----------
+# CLI (optional quick run)
 
 def main():
     ap = argparse.ArgumentParser()
